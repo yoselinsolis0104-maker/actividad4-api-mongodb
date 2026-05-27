@@ -1,4 +1,8 @@
+require('dotenv').config();
+
 const express = require('express');
+
+const connectDB = require('./config/db');
 
 const tasksRoutes = require('./routes/tasksRoutes');
 const notFound = require('./middlewares/notFound');
@@ -6,18 +10,17 @@ const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 
+connectDB();
+
 app.use(express.json());
 
-// rutas
 app.use('/tasks', tasksRoutes);
 
-// middleware 404
 app.use(notFound);
 
-// middleware errores
 app.use(errorHandler);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);

@@ -1,124 +1,144 @@
-const fs = require('fs');
-const path = require('path');
+const Task = require('../models/taskModel');
 
-const tasksFile = path.join(__dirname, '../data/tasks.json');
+// GET /tasks
+exports.getAllTasks = async (req, res) => {
 
-// leer tareas
-const getTasks = () => {
-    const data = fs.readFileSync(tasksFile, 'utf-8');
-    return JSON.parse(data);
-};
+    try {
 
-// guardar tareas
-const saveTasks = (tasks) => {
-    fs.writeFileSync(tasksFile, JSON.stringify(tasks, null, 2));
-};
+        const tasks = await Task.find();
 
-// obtener todas
-const getAllTasks = (req, res) => {
-    const tasks = getTasks();
-
-    res.status(200).json({
-        ok: true,
-        data: tasks
-    });
-};
-
-// obtener por id
-const getTaskById = (req, res) => {
-    const tasks = getTasks();
-
-    const task = tasks.find(
-        t => t.id === parseInt(req.params.id)
-    );
-
-    if (!task) {
-        return res.status(404).json({
-            ok: false,
-            error: 'Tarea no encontrada'
+        res.status(200).json({
+            ok: true,
+            data: tasks
         });
+
+    } catch (error) {
+
+        res.status(500).json({
+            ok: false,
+            error: error.message
+        });
+
     }
 
-    res.status(200).json({
-        ok: true,
-        data: task
-    });
 };
 
-// crear tarea
-const createTask = (req, res) => {
-    const tasks = getTasks();
+// GET /tasks/:id
+exports.getTaskById = async (req, res) => {
 
-    const newTask = {
-        id: tasks.length + 1,
-        title: req.body.title,
-        description: req.body.description,
-        done: req.body.done || false,
-        priority: req.body.priority
-    };
+    try {
 
-    tasks.push(newTask);
+        const task = await Task.findById(req.params.id);
 
-    saveTasks(tasks);
+        if (!task) {
 
-    res.status(201).json({
-        ok: true,
-        data: newTask
-    });
-};
+            return res.status(404).json({
+                ok: false,
+                error: 'Tarea no encontrada'
+            });
 
-// actualizar
-const updateTask = (req, res) => {
-    const tasks = getTasks();
+        }
 
-    const index = tasks.findIndex(
-        t => t.id === parseInt(req.params.id)
-    );
-
-    if (index === -1) {
-        return res.status(404).json({
-            ok: false,
-            error: 'Tarea no encontrada'
+        res.status(200).json({
+            ok: true,
+            data: task
         });
+
+    } catch (error) {
+
+        res.status(500).json({
+            ok: false,
+            error: error.message
+        });
+
     }
 
-    tasks[index] = {
-        ...tasks[index],
-        ...req.body
-    };
-
-    saveTasks(tasks);
-
-    res.status(200).json({
-        ok: true,
-        data: tasks[index]
-    });
 };
 
-// eliminar
-const deleteTask = (req, res) => {
-    const tasks = getTasks();
+// POST /tasks
+exports.createTask = async (req, res) => {
 
-    const filteredTasks = tasks.filter(
-        t => t.id !== parseInt(req.params.id)
-    );
+    try {
 
-    if (tasks.length === filteredTasks.length) {
-        return res.status(404).json({
-            ok: false,
-            error: 'Tarea no encontrada'
+        const newTask = await Task.create(req.body);
+
+        res.status(201).json({
+            ok: true,
+            data: newTask
         });
+
+    } catch (error) {
+
+        res.status(400).json({
+            ok: false,
+            error: error.message
+        });
+
     }
 
-    saveTasks(filteredTasks);
-
-    res.status(204).send();
 };
 
-module.exports = {
-    getAllTasks,
-    getTaskById,
-    createTask,
-    updateTask,
-    deleteTask
+// PUT /tasks/:id
+exports.updateTask = async (req, res) => {
+
+    try {
+
+        const updatedTask = await Task.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+
+        if (!updatedTask) {
+
+            return res.status(404).json({
+                ok: false,
+                error: 'Tarea no encontrada'
+            });
+
+        }
+
+        res.status(200).json({
+            ok: true,
+            data: updatedTask
+        });
+
+    } catch (error) {
+
+        res.status(400).json({
+            ok: false,
+            error: error.message
+        });
+
+    }
+
+};
+
+// DELETE /tasks/:id
+exports.deleteTask = async (req, res) => {
+
+    try {
+
+        const deletedTask = await Task.findByIdAndDelete(req.params.id);
+
+        if (!deletedTask) {
+
+            return res.status(404).json({
+                ok: false,
+                error: 'Tarea no encontrada'
+            });
+
+        }
+
+        res.status(204).send();
+
+    } catch (error) {
+
+        res.status(500).json({
+            ok: false,
+            error: error.message
+        });
+
+    }
+
 };
