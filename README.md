@@ -1,51 +1,26 @@
-# API RESTful CRUD con Express
+# API RESTful CRUD con MongoDB
 
 ## Descripción
 
-Proyecto desarrollado con Node.js y Express para implementar una API RESTful con operaciones CRUD sobre tareas.
+Proyecto desarrollado con Node.js, Express y MongoDB utilizando Mongoose para implementar una API RESTful con operaciones CRUD persistentes. La aplicación permite crear, consultar, actualizar y eliminar tareas almacenadas en una base de datos MongoDB local.
 
-## Instalación
-
-```bash
-npm install
-```
-
-## Ejecución
-
-```bash
-npm run dev
-```
-
-## Endpoints implementados
-
-- GET /tasks
-- GET /tasks/:id
-- POST /tasks
-- PUT /tasks/:id
-- DELETE /tasks/:id
-
-## Ejemplo de JSON
-
-```json
-{
-  "title": "Nueva tarea",
-  "description": "Descripción de la tarea",
-  "done": false,
-  "priority": "alta"
-}
-```
+---
 
 ## Tecnologías utilizadas
 
 - Node.js
 - Express
+- MongoDB
+- MongoDB Compass
+- Mongoose
 - Nodemon
-- Postman
+- Dotenv
 
-## Evidencias
+---
 
-Las evidencias y el reporte de la actividad se encuentran dentro de la carpeta evidencias/.
+## Instalación
 
-## Uso de IA
+Instalar dependencias del proyecto:
 
-Se utilizó ChatGPT como apoyo para explicación.
+```bash
+npm install
